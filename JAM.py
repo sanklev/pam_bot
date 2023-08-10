@@ -15,7 +15,7 @@ from aiogram.types import ReplyKeyboardRemove, \
 from aiogram.dispatcher.filters import Text
 
 bot_token = getenv("BOT_TOKEN")
-master = getenv('master_chat')
+master = getenv('MASTER_CHAT')
 
 if not bot_token:
     exit("Error: no token provided")
