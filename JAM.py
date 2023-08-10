@@ -75,8 +75,8 @@ compel_dict_session_1 = {
 
 code = ''
 path_dict = {
-    'akroni': {'cv': 'CV/characters/Fernando_Akroni/Fernando.jpg',
-               'text': 'CV/characters/Fernando_Akroni/Fernando.txt'},
+    'akroni': {'cv': 'CV/characters/fernando_akroni/Fernando.jpg',
+               'text': 'CV/characters/fernando_akroni/Fernando.txt'},
     # 'Lucio': {'cv': 'CV{0}/Lucio/Lucio.jpg',
     #         'text': 'CV/Lucio/Lucio.txt'},
     'damian': {'cv': 'CV/characters/damian_orton/Damian.jpg',
@@ -91,10 +91,10 @@ path_dict = {
                        'text': 'CV/locations/shattle-center/shattle-center.txt'},
     'apollon': {'cv': 'CV/locations/train/train.jpg',
                 'text': 'CV/locations/train/train.txt'},
-    'csi': {'cv': 'CV/locations/csi/csi.jpg',
-            'text': 'CV/locations/csi/csi.txt'},
-    'mayfall': {'cv': 'CV/locations/mayfall/mayfall.jpg',
-                'text': 'CV/locations/mayfall/mayfall.txt'},
+    'csi': {'cv': 'CV/locations/CSI/csi.jpg',
+            'text': 'CV/locations/CSI/CSI.txt'},
+    'mayfall': {'cv': 'CV/locations/MayFall/mayfall.jpg',
+                'text': 'CV/locations/MayFall/mayfall.txt'},
     '0021': {'text': 'CV/documents/order0021/order0021.txt'},
     'hr': {'text': 'CV/characters/hr/hr.txt',
            'cv': 'CV/characters/hr/hr.jpg'}
