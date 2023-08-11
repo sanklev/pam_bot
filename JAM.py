@@ -70,7 +70,7 @@ compel_dict_session_1 = {
     'johny': 'CV/compels/session1/Johny.txt',
     'gamedesigner': 'CV/compels/session1/olya.txt',
     'lina': 'CV/compels/session1/Lina.txt',
-    'test': 'Принять контракт от MayFall, убить или похитить ученого, доставить его разработку в корпорацию.'
+    'test': 'CV/compels/session1/test.txt'
 }
 
 code = ''
@@ -219,12 +219,12 @@ async def god_action(message: types.Message, state: FSMContext):
                 keyboard.add("Принять")
                 keyboard.add('Отказаться')
                 keyboard.add('Обсудить')
-                with open(personal_path_reshala[current_cv]['text'], encoding='utf-8') as f:
+                with open(compel_dict_session_1[message.text.lower()], encoding='utf-8') as f:
                     lines = f.readlines()
                 text = ''.join(lines)
                 await bot.send_message(chat_id=doomsday_dict[message.text.lower()], reply_markup=keyboard
                                        , text=md.text(
-                        md.text(f"Вам навязано осложнение")
+                        md.text(text)
                         # sep='\n',
                     ),
                                        parse_mode=ParseMode.MARKDOWN,
