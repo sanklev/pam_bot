@@ -630,6 +630,36 @@ async def send_file(message: types.Message, state: FSMContext):
                 lines = f.readlines()
             text = ''.join(lines)
             await message.reply(text)
+        elif data['code'] == 'mary':
+            try:
+                photo = open(personal_path_hacker[current_cv]['cv'], "rb")
+                await bot.send_photo(message.from_user.id, photo)
+            except:
+                pass
+            with open(personal_path_hacker[current_cv]['text'], encoding='utf-8') as f:
+                lines = f.readlines()
+            text = ''.join(lines)
+            await message.reply(text)
+        elif data['code'] == 'diary':
+            try:
+                photo = open(personal_path_reshala[current_cv]['cv'], "rb")
+                await bot.send_photo(message.from_user.id, photo)
+            except:
+                pass
+            with open(personal_path_reshala[current_cv]['text'], encoding='utf-8') as f:
+                lines = f.readlines()
+            text = ''.join(lines)
+            await message.reply(text)
+        elif data['code'] == 'nda3091':
+            try:
+                photo = open(nda3091[current_cv]['cv'], "rb")
+                await bot.send_photo(message.from_user.id, photo)
+            except:
+                pass
+            with open(nda3091[current_cv]['text'], encoding='utf-8') as f:
+                lines = f.readlines()
+            text = ''.join(lines)
+            await message.reply(text)
 
 
 
