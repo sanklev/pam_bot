@@ -103,22 +103,22 @@ path_dict = {
 }
 
 personal_path_hacker = {
-    'koh': {'cv': 'CV/characters/koh/koh.jpg',
+    'koh': {'cv': 'CV/characters/koh/koh.jpeg',
                 'text': 'CV/characters/koh/koh.txt'},
-    'sister': {'cv': 'CV/characters/sister/mary.jpg',
+    'sister': {'cv': 'CV/characters/sister/mary.jpeg',
                 'text': 'CV/characters/sister/mary.txt'},
-    'pigs': {'cv': 'CV/characters/koh/pigs.jpg',
+    'pigs': {'cv': 'CV/characters/koh/pigs.jpeg',
                 'text': 'CV/characters/koh/pigs.txt'},
-    'metzgerai': {'cv': 'CV/locations/metzgerai/metzgerai.jpg',
+    'metzgerai': {'cv': 'CV/locations/metzgerai/metzgerai.jpeg',
                 'text': 'CV/locations/metzgerai/metzgerai.txt'},
 }
 
 personal_path_reshala = {
     'death_squad': {'cv': 'CV/characters/death_squad/death_squad.jpg',
                 'text': 'CV/characters/death_squad/death_squad.txt'},
-    'rats': {'cv': 'CV/characters/brinn_the_rat/rats.jpg',
-                'text': 'CV/characters/brinn_the_rat/rats.txt'},
-    'squad': {'cv': 'CV/characters/squad/squad.jpg',
+    'rats': {'cv': 'CV/characters/brinn_the_rat/the_rat.jpg',
+                'text': 'CV/characters/brinn_the_rat/Rats.txt'},
+    'squad': {'cv': 'CV/characters/squad/squad.jpeg',
                 'text': 'CV/characters/squad/squad.txt'},
     # 'csi hq': {'cv': 'CV/locations/MayFall/mayfall.jpg',
     #             'text': 'CV/locations/MayFall/mayfall.txt'},
