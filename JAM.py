@@ -67,9 +67,9 @@ doomsday_dict = {
 }
 
 compel_dict_session_1 = {
-    'johny': 'Принять контракт от MayFall, убить или похитить ученого, доставить его разработку в корпорацию.',
-    'gamedesigner': 'Принять контракт от MayFall, убить или похитить ученого, доставить его разработку в корпорацию.',
-    'lina': 'Принять контракт от MayFall, убить или похитить ученого, доставить его разработку в корпорацию.',
+    'johny': 'CV/compels/session1/Johny.txt',
+    'gamedesigner': 'CV/compels/session1/olya.txt',
+    'lina': 'CV/compels/session1/Lina.txt',
     'test': 'Принять контракт от MayFall, убить или похитить ученого, доставить его разработку в корпорацию.'
 }
 
@@ -83,6 +83,8 @@ path_dict = {
                'text': 'CV/characters/damian_orton/damian.txt'},
     'mihail': {'cv': 'CV/characters/players/mihail.jpg',
                'text': 'CV/characters/players/Mihail.txt'},
+    'oleg': {'cv': 'CV/characters/players/oleg.jpg',
+               'text': 'CV/characters/players/Oleg.txt'},
     'hydra': {'cv': 'CV/characters/players/Hydra.jpg',
                'text': 'CV/characters/players/Hydra.txt'},
     'brinn': {'cv': 'CV/characters/brinn_the_rat/Brinn.jpg',
@@ -100,7 +102,34 @@ path_dict = {
            'cv': 'CV/characters/hr/hr.jpg'}
 }
 
-cv_list = list(path_dict.keys())
+personal_path_hacker = {
+    'koh': {'cv': 'CV/characters/koh/koh.jpg',
+                'text': 'CV/characters/koh/koh.txt'},
+    'sister': {'cv': 'CV/characters/sister/mary.jpg',
+                'text': 'CV/characters/sister/mary.txt'},
+    'pigs': {'cv': 'CV/characters/koh/pigs.jpg',
+                'text': 'CV/characters/koh/pigs.txt'},
+    'metzgerai': {'cv': 'CV/locations/metzgerai/metzgerai.jpg',
+                'text': 'CV/locations/metzgerai/metzgerai.txt'},
+}
+
+personal_path_reshala = {
+    'death_squad': {'cv': 'CV/characters/death_squad/death_squad.jpg',
+                'text': 'CV/characters/death_squad/death_squad.txt'},
+    'rats': {'cv': 'CV/characters/brinn_the_rat/rats.jpg',
+                'text': 'CV/characters/brinn_the_rat/rats.txt'},
+    'squad': {'cv': 'CV/characters/squad/squad.jpg',
+                'text': 'CV/characters/squad/squad.txt'},
+    # 'csi hq': {'cv': 'CV/locations/MayFall/mayfall.jpg',
+    #             'text': 'CV/locations/MayFall/mayfall.txt'},
+}
+
+nda3091 = {
+    'slum_area': {'cv': 'CV/locations/slum_area/slum_area.jpg',
+                'text': 'CV/locations/slum_area/slum_area.txt'},
+    'chemical_plant': {'cv': 'CV/locations/chemical_plant/chemical_plant.jpg',
+                'text': 'CV/locations/chemical_plant/chemical_plant.txt'},
+}
 
 
 @dp.message_handler(state='*', commands=['cancel'])
@@ -395,6 +424,7 @@ async def process_code(message: types.Message, state: FSMContext):
 async def process_code(message: types.Message, state: FSMContext):
     """Process user name"""
     if message.text.lower() == '123':
+        cv_list = list(path_dict.keys())
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
         await state.update_data(code=message.text.lower())
         for name in cv_list:
@@ -451,6 +481,120 @@ async def process_code(message: types.Message, state: FSMContext):
             )
             await message.answer("Выберите досье:", reply_markup=keyboard)
 
+    if message.text.lower() == 'mary':
+        cv_list = list(personal_path_hacker.keys())
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        await state.update_data(code=message.text.lower())
+        for name in cv_list:
+            if name not in ['0021','hr']:
+                keyboard.add(name)
+        await state.set_state(CV.cv.state)
+
+        # Finish our conversation
+        async with state.proxy() as data:
+            # And send message
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Ваш код: {md.bold(data['code'])}, записан")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Записанный код ведет в вашу личную базу данных")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Для возврата на ввода кода, введите /back")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+        await message.answer("Выберите досье:", reply_markup=keyboard)
+
+
+    elif message.text.lower() == 'diary':
+        cv_list = list(personal_path_reshala.keys())
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        await state.update_data(code=message.text.lower())
+        for name in cv_list:
+            if name not in ['0021','hr']:
+                keyboard.add(name)
+        await state.set_state(CV.cv.state)
+
+        # Finish our conversation
+        async with state.proxy() as data:
+            # And send message
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Ваш код: {md.bold(data['code'])}, записан")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Записанный код ведет в вашу личную базу данных")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Для возврата на ввода кода, введите /back")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+        await message.answer("Выберите досье:", reply_markup=keyboard)
+
+    elif message.text.lower() == 'nda3091':
+        cv_list = list(nda3091.keys())
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        await state.update_data(code=message.text.lower())
+        for name in cv_list:
+            if name not in ['0021', 'hr']:
+                keyboard.add(name)
+        await state.set_state(CV.cv.state)
+
+        # Finish our conversation
+        async with state.proxy() as data:
+            # And send message
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Ваш код: {md.bold(data['code'])}, записан")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Записанный код ведет в базу данных сформированную из собранных данных из мозга информатора в CSI")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Для возврата на ввода кода, введите /back")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+        await message.answer("Выберите досье:", reply_markup=keyboard)
 
     else:
         await message.answer("Указанный код не ведет ни к одной из существующих баз данных")
