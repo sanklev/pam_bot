@@ -83,8 +83,8 @@ path_dict = {
                'text': 'CV/characters/damian_orton/damian.txt'},
     'mihail': {'cv': 'CV/characters/players/mihail.jpg',
                'text': 'CV/characters/players/Mihail.txt'},
-    'oleg': {'cv': 'CV/characters/players/Oleg.jpeg',
-               'text': 'CV/characters/players/oleg.txt'},
+    'oleg': {'cv': 'CV/characters/players/oleg.jpeg',
+               'text': 'CV/characters/players/Oleg.txt'},
     'hydra': {'cv': 'CV/characters/players/Hydra.jpg',
                'text': 'CV/characters/players/Hydra.txt'},
     'brinn': {'cv': 'CV/characters/brinn_the_rat/Brinn.jpg',
@@ -219,6 +219,9 @@ async def god_action(message: types.Message, state: FSMContext):
                 keyboard.add("Принять")
                 keyboard.add('Отказаться')
                 keyboard.add('Обсудить')
+                with open(personal_path_reshala[current_cv]['text'], encoding='utf-8') as f:
+                    lines = f.readlines()
+                text = ''.join(lines)
                 await bot.send_message(chat_id=doomsday_dict[message.text.lower()], reply_markup=keyboard
                                        , text=md.text(
                         md.text(f"Вам навязано осложнение")
