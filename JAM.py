@@ -40,14 +40,13 @@ class state(State):
 
 class CV(StatesGroup):
     user = state()  # user logi will be writen here
-    code = state()  # Will be represented in storage as 'Form:name'
-    cv = state()  # Will be represented in storage as 'Form:age'
-    contract = state()  # Will be represented in storage as 'Form:gender'
+    code = state()  # Для выбора базы данных
+    cv = state()  # Для выбора CV
     god = state()  # для автора - раздавать компелы
     god_message = state()  # переписка
-    compel = state()
+    compel = state() # Для игрока - принять или отклонить осложнение
     message = state()  # переписка
-    god_chosen = state()
+    god_chosen = state() # Для автора - выбор игрока кому написать
 
 
 # dict with passwords and logins
@@ -250,6 +249,37 @@ async def process_code(message: types.Message, state: FSMContext):
         except:
             await message.answer("Теперь ты тут навечно. Ха-ха-ха")
 
+@dp.message_handler(state=CV.code, commands=['message'])
+async def process_code(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        try:
+            if data['user'] is not None:
+                try:
+                    await state.set_state(CV.message.state)
+                    data['message'] = 'code'
+                    await message.answer("Теперь ваши сообщения получает Мастер")
+                    await message.answer("Для выхода из режима напишите /stop")
+                except:
+                    await state.set_state(CV.code.state)
+                    await message.answer("Введите код доступа к нужной базе данных")
+        except:
+            await message.answer("Теперь ты тут навечно. Ха-ха-ха")
+
+@dp.message_handler(state=CV.cv, commands=['message'])
+async def process_code(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        try:
+            if data['user'] is not None:
+                try:
+                    await state.set_state(CV.message.state)
+                    data['message'] = 'cv'
+                    await message.answer("Теперь ваши сообщения получает Мастер")
+                    await message.answer("Для выхода из режима напишите /stop")
+                except:
+                    await state.set_state(CV.code.state)
+                    await message.answer("Введите код доступа к нужной базе данных")
+        except:
+            await message.answer("Теперь ты тут навечно. Ха-ха-ха")
 
 @dp.message_handler(state=CV.message, commands=['stop'])
 async def process_code(message: types.Message, state: FSMContext):
