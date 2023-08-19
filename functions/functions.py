@@ -22,7 +22,7 @@ def compel_keyboard():
     return keyboard
 
 async def send_master_text(bot, master, data, text):
-     await bot.send_message(chat_id=master, text=md.text(
+    await bot.send_message(chat_id=master, text=md.text(
             md.text(f"{md.bold(data['user'])}, {text}")
             # sep='\n',
             ),
