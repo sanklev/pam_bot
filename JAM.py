@@ -25,7 +25,7 @@ bot = Bot(token=bot_token, parse_mode=types.ParseMode.HTML)
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
-## parameters
+# parameters
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
@@ -43,9 +43,9 @@ class CV(StatesGroup):
     cv = state()  # Для выбора CV
     god = state()  # для автора - раздавать компелы
     god_message = state()  # переписка
-    compel = state() # Для игрока - принять или отклонить осложнение
+    compel = state()  # Для игрока - принять или отклонить осложнение
     message = state()  # переписка
-    god_chosen = state() # Для автора - выбор игрока кому написать
+    god_chosen = state()  # Для автора - выбор игрока кому написать
 
 
 # dict with passwords and logins
@@ -60,7 +60,7 @@ users = {
 
 doomsday_dict = {
     'johny': 12312,
-    'revolution': 123121,
+    'lina': 123121,
     'gamedesigner': 123111,
     'test': 123123
 }
@@ -83,9 +83,9 @@ path_dict = {
     'mihail': {'cv': 'CV/characters/players/mihail.jpg',
                'text': 'CV/characters/players/Mihail.txt'},
     'oleg': {'cv': 'CV/characters/players/oleg.jpeg',
-               'text': 'CV/characters/players/Oleg.txt'},
+             'text': 'CV/characters/players/Oleg.txt'},
     'hydra': {'cv': 'CV/characters/players/Hydra.jpg',
-               'text': 'CV/characters/players/Hydra.txt'},
+              'text': 'CV/characters/players/Hydra.txt'},
     'brinn': {'cv': 'CV/characters/brinn_the_rat/Brinn.jpg',
               'text': 'CV/characters/brinn_the_rat/Brinn.txt'},
     'shuttle-center': {'cv': 'CV/locations/shattle-center/shattle-center.jpg',
@@ -103,31 +103,31 @@ path_dict = {
 
 personal_path_hacker = {
     'koh': {'cv': 'CV/characters/koh/koh.jpeg',
-                'text': 'CV/characters/koh/koh.txt'},
+            'text': 'CV/characters/koh/koh.txt'},
     'sister': {'cv': 'CV/characters/sister/mary.jpeg',
-                'text': 'CV/characters/sister/mary.txt'},
+               'text': 'CV/characters/sister/mary.txt'},
     'pigs': {'cv': 'CV/characters/koh/pigs.jpeg',
-                'text': 'CV/characters/koh/pigs.txt'},
+             'text': 'CV/characters/koh/pigs.txt'},
     'metzgerai': {'cv': 'CV/locations/metzgerai/metzgerai.jpeg',
-                'text': 'CV/locations/metzgerai/metzgerai.txt'},
+                  'text': 'CV/locations/metzgerai/metzgerai.txt'},
 }
 
 personal_path_reshala = {
     'death_squad': {'cv': 'CV/characters/death_squad/death_squad.jpg',
-                'text': 'CV/characters/death_squad/death_squad.txt'},
+                    'text': 'CV/characters/death_squad/death_squad.txt'},
     'rats': {'cv': 'CV/characters/brinn_the_rat/the_rat.jpg',
-                'text': 'CV/characters/brinn_the_rat/Rats.txt'},
+             'text': 'CV/characters/brinn_the_rat/Rats.txt'},
     'squad': {'cv': 'CV/characters/squad/squad.jpeg',
-                'text': 'CV/characters/squad/squad.txt'},
+              'text': 'CV/characters/squad/squad.txt'},
     # 'csi hq': {'cv': 'CV/locations/MayFall/mayfall.jpg',
     #             'text': 'CV/locations/MayFall/mayfall.txt'},
 }
 
 nda3091 = {
     'slum_area': {'cv': 'CV/locations/slum_area/slum_area.jpg',
-                'text': 'CV/locations/slum_area/slum_area.txt'},
+                  'text': 'CV/locations/slum_area/slum_area.txt'},
     'chemical_plant': {'cv': 'CV/locations/chemical_plant/chemical_plant.jpg',
-                'text': 'CV/locations/chemical_plant/chemical_plant.txt'},
+                       'text': 'CV/locations/chemical_plant/chemical_plant.txt'},
 }
 
 
@@ -168,7 +168,7 @@ async def process_code(message: types.Message, state: FSMContext):
                 ),
                 parse_mode=ParseMode.MARKDOWN,
             )
-            await send_master_text(bot,master, data, "вошел")
+            await send_master_text(bot, master, data, "вошел")
         await CV.code.set()
         doomsday_dict[data['user']] = message.from_user.id
         await message.reply("Введите код доступа к базе")
@@ -213,11 +213,11 @@ async def god_action(message: types.Message, state: FSMContext):
                 with open(compel_dict_session_1[message.text.lower()], encoding='utf-8') as f:
                     lines = f.readlines()
                 text = ''.join(lines)
-                await bot.send_message(chat_id=doomsday_dict[message.text.lower()], reply_markup=keyboard
-                                       , text=md.text(
-                        text,
-                        sep='\n'
-                    ),
+                await bot.send_message(chat_id=doomsday_dict[message.text.lower()], reply_markup=keyboard,
+                                       text=md.text(
+                                           text,
+                                           sep='\n'
+                                       ),
                                        parse_mode=ParseMode.MARKDOWN,
                                        )
                 await bot.send_message(chat_id=doomsday_dict[message.text.lower()], text=md.text(
@@ -248,6 +248,7 @@ async def process_code(message: types.Message, state: FSMContext):
         except:
             await message.answer("Теперь ты тут навечно. Ха-ха-ха")
 
+
 @dp.message_handler(state=CV.code, commands=['message'])
 async def process_code(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
@@ -263,6 +264,7 @@ async def process_code(message: types.Message, state: FSMContext):
                     await message.answer("Введите код доступа к нужной базе данных")
         except:
             await message.answer("Теперь ты тут навечно. Ха-ха-ха")
+
 
 @dp.message_handler(state=CV.cv, commands=['message'])
 async def process_code(message: types.Message, state: FSMContext):
@@ -280,6 +282,7 @@ async def process_code(message: types.Message, state: FSMContext):
         except:
             await message.answer("Теперь ты тут навечно. Ха-ха-ха")
 
+
 @dp.message_handler(state=CV.message, commands=['stop'])
 async def process_code(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
@@ -290,15 +293,15 @@ async def process_code(message: types.Message, state: FSMContext):
                         await state.set_state(CV.compel.state)
                         keyboard = compel_keyboard()
                         await message.answer("Примите решение по компелу:", reply_markup=keyboard)
-                        await send_master_text(bot,master, data, "закончил диалог")
+                        await send_master_text(bot, master, data, "закончил диалог")
                     else:
                         await state.set_state(CV.code.state)
                         await message.answer("Введите код доступа к нужной базе данных")
-                        await send_master_text(bot,master, data, "закончил диалог")
+                        await send_master_text(bot, master, data, "закончил диалог")
                 except:
                     await state.set_state(CV.code.state)
                     await message.answer("Введите код доступа к нужной базе данных")
-                    await send_master_text(bot,master, data,"закончил диалог")
+                    await send_master_text(bot, master, data, "закончил диалог")
         except:
             await message.answer("Ты застрял здесь навечно")
 
@@ -306,7 +309,7 @@ async def process_code(message: types.Message, state: FSMContext):
 @dp.message_handler(state=CV.message)
 async def process_code(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        await send_master_text(bot,master, data, message.text)
+        await send_master_text(bot, master, data, message.text)
 
 
 @dp.message_handler(state=CV.compel)
@@ -314,18 +317,18 @@ async def process_code(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
 
         if message.text.lower() == 'принять':
-            await send_master_text(bot,master, data, "Осложнение принято")
+            await send_master_text(bot, master, data, "Осложнение принято")
             await message.answer("Вы приняли осложнение. Сейчас мастер даст вам печеньку")
             await message.answer("Введите код доступа к нужной базе данных")
             await state.set_state(CV.code.state)
 
         elif message.text.lower() == 'отказаться':
-            await send_master_text(bot,master, data, 'Осложнение отклонено')
+            await send_master_text(bot, master, data, 'Осложнение отклонено')
             await message.answer("Вы отказались от осложнения, заплатите за это.")
             await message.answer("Введите код доступа к нужной базе данных")
             await state.set_state(CV.code.state)
         elif message.text.lower() == 'обсудить':
-            await send_master_text(bot,master, data,"Хочет обсудить детали")
+            await send_master_text(bot, master, data, "Хочет обсудить детали")
             await state.set_state(CV.message.state)
             await message.answer("Ваши сообщения теперь полуает мастер")
             data['message'] = 'compel'
@@ -399,7 +402,6 @@ async def process_code(message: types.Message, state: FSMContext):
 
 @dp.message_handler(state=CV.code)
 async def process_code(message: types.Message, state: FSMContext):
-    """Process user name"""
     if message.text.lower() == '123':
         cv_list = list(path_dict.keys())
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -407,30 +409,28 @@ async def process_code(message: types.Message, state: FSMContext):
         keyboard.add('/message')
         await state.update_data(code=message.text.lower())
         for name in cv_list:
-            if name not in ['0021','hr']:
+            if name not in ['0021', 'hr']:
                 keyboard.add(name)
         await state.set_state(CV.cv.state)
 
+        # And send message
 
-        async with state.proxy() as data:
-            # And send message
-
-            await bot.send_message(
-                message.chat.id,
-                md.text(
-                    md.text(f"Записанный код ведет в тестовую базу данных с общими для всех сотрудников CV")
-                    # sep='\n',
-                ),
-                parse_mode=ParseMode.MARKDOWN,
-            )
-            await bot.send_message(
-                message.chat.id,
-                md.text(
-                    md.text(f"Для возврата на ввода кода, введите /back")
-                    # sep='\n',
-                ),
-                parse_mode=ParseMode.MARKDOWN,
-            )
+        await bot.send_message(
+            message.chat.id,
+            md.text(
+                md.text(f"Записанный код ведет в тестовую базу данных с общими для всех сотрудников CV")
+                # sep='\n',
+            ),
+            parse_mode=ParseMode.MARKDOWN,
+        )
+        await bot.send_message(
+            message.chat.id,
+            md.text(
+                md.text(f"Для возврата на ввода кода, введите /back")
+                # sep='\n',
+            ),
+            parse_mode=ParseMode.MARKDOWN,
+        )
         await message.answer("Выберите досье:", reply_markup=keyboard)
     elif message.text.lower() == '0021':
         async with state.proxy() as data:
@@ -439,7 +439,7 @@ async def process_code(message: types.Message, state: FSMContext):
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
             keyboard.add('0021')
             keyboard.add('hr')
-            await send_master_text(bot,master, data, "Открыта пасхалка")
+            await send_master_text(bot, master, data, "Открыта пасхалка")
             await bot.send_message(
                 message.chat.id,
                 md.text(
@@ -487,13 +487,12 @@ async def process_code(message: types.Message, state: FSMContext):
             )
         await message.answer("Выберите досье:", reply_markup=keyboard)
 
-
     elif message.text.lower() == 'diary':
         cv_list = list(personal_path_reshala.keys())
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
         await state.update_data(code=message.text.lower())
         for name in cv_list:
-            if name not in ['0021','hr']:
+            if name not in ['0021', 'hr']:
                 keyboard.add(name)
         await state.set_state(CV.cv.state)
 
@@ -549,7 +548,8 @@ async def process_code(message: types.Message, state: FSMContext):
             await bot.send_message(
                 message.chat.id,
                 md.text(
-                    md.text(f"Записанный код ведет в базу данных сформированную из собранных данных из мозга информатора в CSI")
+                    md.text(
+                        f"Записанный код ведет в базу данных, сформированную из собранных данных из мозга сотрудника CSI")
                     # sep='\n',
                 ),
                 parse_mode=ParseMode.MARKDOWN,
@@ -628,7 +628,6 @@ async def send_file(message: types.Message, state: FSMContext):
                 lines = f.readlines()
             text = ''.join(lines)
             await message.reply(text)
-
 
 
 if __name__ == '__main__':
