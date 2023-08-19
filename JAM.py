@@ -170,12 +170,7 @@ async def process_code(message: types.Message, state: FSMContext):
                 ),
                 parse_mode=ParseMode.MARKDOWN,
             )
-            await bot.send_message(chat_id=master, text=md.text(
-                md.text(f"{md.bold(data['user'])}, вошел")
-                # sep='\n',
-            ),
-                                   parse_mode=ParseMode.MARKDOWN,
-                                   )
+            await send_master_text(bot,master, data, "вошел")
         await CV.code.set()
         doomsday_dict[data['user']] = message.from_user.id
         await message.reply("Введите код доступа к базе")
@@ -266,30 +261,15 @@ async def process_code(message: types.Message, state: FSMContext):
                         await state.set_state(CV.compel.state)
                         keyboard = compel_keyboard()
                         await message.answer("Примите решение по компелу:", reply_markup=keyboard)
-                        await bot.send_message(chat_id=master, text=md.text(
-                            md.text(f"{md.bold(data['user'])}, закончил диалог")
-                            # sep='\n',
-                        ),
-                                               parse_mode=ParseMode.MARKDOWN,
-                                               )
+                        await send_master_text(bot,master, data, "закончил диалог")
                     else:
                         await state.set_state(CV.code.state)
                         await message.answer("Введите код доступа к нужной базе данных")
-                        await bot.send_message(chat_id=master, text=md.text(
-                            md.text(f"{md.bold(data['user'])}, закончил диалог")
-                            # sep='\n',
-                        ),
-                                               parse_mode=ParseMode.MARKDOWN,
-                                               )
+                        await send_master_text(bot,master, data, "закончил диалог")
                 except:
                     await state.set_state(CV.code.state)
                     await message.answer("Введите код доступа к нужной базе данных")
-                    await bot.send_message(chat_id=master, text=md.text(
-                        md.text(f"{md.bold(data['user'])}, закончил диалог")
-                        # sep='\n',
-                    ),
-                                           parse_mode=ParseMode.MARKDOWN,
-                                           )
+                    await send_master_text(bot,master, data,"закончил диалог")
         except:
             await message.answer("Ты застрял здесь навечно")
 
@@ -297,11 +277,7 @@ async def process_code(message: types.Message, state: FSMContext):
 @dp.message_handler(state=CV.message)
 async def process_code(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        await bot.send_message(chat_id=master, text=md.text(
-            md.text(f"{md.bold(data['user'])}, {message.text}")
-            # sep='\n',
-        ), parse_mode=ParseMode.MARKDOWN,
-                               )
+        await send_master_text(bot,master, data, message.text)
 
 
 @dp.message_handler(state=CV.compel)
@@ -309,23 +285,18 @@ async def process_code(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
 
         if message.text.lower() == 'принять':
-            await send_master_text(bot, "Осложнение принято")
+            await send_master_text(bot,master, data, "Осложнение принято")
             await message.answer("Вы приняли осложнение. Сейчас мастер даст вам печеньку")
             await message.answer("Введите код доступа к нужной базе данных")
             await state.set_state(CV.code.state)
 
         elif message.text.lower() == 'отказаться':
-            await send_master_text(bot, 'Осложнение отклонено')
+            await send_master_text(bot,master, data, 'Осложнение отклонено')
             await message.answer("Вы отказались от осложнения, заплатите за это.")
             await message.answer("Введите код доступа к нужной базе данных")
             await state.set_state(CV.code.state)
         elif message.text.lower() == 'обсудить':
-            await bot.send_message(chat_id=master, text=md.text(
-                md.text(f"{md.bold(data['user'])}, Хочет обсудить детали")
-                # sep='\n',
-            ),
-                                   parse_mode=ParseMode.MARKDOWN,
-                                   )
+            await send_master_text(bot,master, data,"Хочет обсудить детали")
             await state.set_state(CV.message.state)
             await message.answer("Ваши сообщения теперь полуает мастер")
             data['message'] = 'compel'
@@ -444,10 +415,7 @@ async def process_code(message: types.Message, state: FSMContext):
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
             keyboard.add('0021')
             keyboard.add('hr')
-            await bot.send_message(chat_id=master, text=md.text(
-                md.text(f"{md.bold(data['user'])}, Открыта пасхалка")
-                # sep='\n',
-            ),parse_mode=ParseMode.MARKDOWN,)
+            await send_master_text(bot,master, data, "Открыта пасхалка")
             await bot.send_message(
                 message.chat.id,
                 md.text(
