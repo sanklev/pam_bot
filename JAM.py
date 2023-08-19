@@ -1,5 +1,4 @@
 import logging
-import aiogram as aio
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
@@ -404,23 +403,18 @@ async def process_code(message: types.Message, state: FSMContext):
     if message.text.lower() == '123':
         cv_list = list(path_dict.keys())
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        keyboard.add('/back')
+        keyboard.add('/message')
         await state.update_data(code=message.text.lower())
         for name in cv_list:
             if name not in ['0021','hr']:
                 keyboard.add(name)
         await state.set_state(CV.cv.state)
 
-        # Finish our conversation
+
         async with state.proxy() as data:
             # And send message
-            await bot.send_message(
-                message.chat.id,
-                md.text(
-                    md.text(f"Ваш код: {md.bold(data['code'])}, записан")
-                    # sep='\n',
-                ),
-                parse_mode=ParseMode.MARKDOWN,
-            )
+
             await bot.send_message(
                 message.chat.id,
                 md.text(
@@ -459,13 +453,12 @@ async def process_code(message: types.Message, state: FSMContext):
     if message.text.lower() == 'mary':
         cv_list = list(personal_path_hacker.keys())
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        keyboard.add('/back')
+        keyboard.add('/message')
         await state.update_data(code=message.text.lower())
         for name in cv_list:
-            if name not in ['0021','hr']:
-                keyboard.add(name)
+            keyboard.add(name)
         await state.set_state(CV.cv.state)
-
-        # Finish our conversation
         async with state.proxy() as data:
             # And send message
             await bot.send_message(
