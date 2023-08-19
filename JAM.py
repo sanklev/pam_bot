@@ -13,7 +13,7 @@ from aiogram.types import ReplyKeyboardRemove, \
     ReplyKeyboardMarkup, KeyboardButton, \
     InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.dispatcher.filters import Text
-from functions.functions import compel_keyboard
+from functions.functions import compel_keyboard, send_master_text
 
 bot_token = getenv("BOT_TOKEN")
 master = getenv('MASTER_CHAT')
@@ -256,23 +256,6 @@ async def process_code(message: types.Message, state: FSMContext):
             await message.answer("Теперь ты тут навечно. Ха-ха-ха")
 
 
-@dp.message_handler(state=[CV.cv, CV.code], commands=['message'])
-async def process_code(message: types.Message, state: FSMContext):
-    async with state.proxy() as data:
-        try:
-            if data['user'] is not None:
-                try:
-                    await state.set_state(CV.message.state)
-                    data['message'] = 'code'
-                    await message.answer("Теперь ваши сообщения получает Мастер")
-                    await message.answer("Для выхода из режима напишите /stop")
-                except:
-                    await state.set_state(CV.code.state)
-                    await message.answer("Введите код доступа к нужной базе данных")
-        except:
-            await message.answer("Теперь ты тут навечно. Ха-ха-ха")
-
-
 @dp.message_handler(state=CV.message, commands=['stop'])
 async def process_code(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
@@ -324,42 +307,35 @@ async def process_code(message: types.Message, state: FSMContext):
 @dp.message_handler(state=CV.compel)
 async def process_code(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        await bot.send_message(chat_id=master, text=md.text(
-            md.text(f"{md.bold(data['user'])}, навязано осложнение")
-            # sep='\n',
-        ),
-                               parse_mode=ParseMode.MARKDOWN,
-                               )
-    if message.text.lower() == 'принять':
-        await bot.send_message(chat_id=master, text=md.text(
-            md.text(f"{md.bold(data['user'])}, Осложнение принято")
-            # sep='\n',
-        ),
-                               parse_mode=ParseMode.MARKDOWN,
-                               )
-        await message.answer("Введите код доступа к нужной базе данных")
-        await state.set_state(CV.code.state)
 
-    elif message.text.lower() == 'отказаться':
-        await bot.send_message(chat_id=master, text=md.text(
-            md.text(f"{md.bold(data['user'])}, Осложнение отклонено")
-            # sep='\n',
-        ),
-                               parse_mode=ParseMode.MARKDOWN,
-                               )
-        await message.answer("Введите код доступа к нужной базе данных")
-        await state.set_state(CV.code.state)
-    elif message.text.lower() == 'обсудить':
-        await state.set_state(CV.message.state)
-        await message.answer("Ваши сообщения теперь полуает мастер")
-        data['message'] = 'compel'
+        if message.text.lower() == 'принять':
+            await send_master_text(bot, "Осложнение принято")
+            await message.answer("Вы приняли осложнение. Сейчас мастер даст вам печеньку")
+            await message.answer("Введите код доступа к нужной базе данных")
+            await state.set_state(CV.code.state)
 
-        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        keyboard.add("/stop")
-        await message.answer("Для выхода из режима наберите /stop", reply_markup=keyboard)
+        elif message.text.lower() == 'отказаться':
+            await send_master_text(bot, 'Осложнение отклонено')
+            await message.answer("Вы отказались от осложнения, заплатите за это.")
+            await message.answer("Введите код доступа к нужной базе данных")
+            await state.set_state(CV.code.state)
+        elif message.text.lower() == 'обсудить':
+            await bot.send_message(chat_id=master, text=md.text(
+                md.text(f"{md.bold(data['user'])}, Хочет обсудить детали")
+                # sep='\n',
+            ),
+                                   parse_mode=ParseMode.MARKDOWN,
+                                   )
+            await state.set_state(CV.message.state)
+            await message.answer("Ваши сообщения теперь полуает мастер")
+            data['message'] = 'compel'
 
-    else:
-        await message.answer("Примите решение.")
+            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            keyboard.add("/stop")
+            await message.answer("Для выхода из режима общения наберите /stop", reply_markup=keyboard)
+
+        else:
+            await message.answer("Примите решение по осложнению.")
 
 
 @dp.message_handler(state=CV.god_chosen)

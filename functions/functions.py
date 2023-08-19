@@ -21,3 +21,10 @@ def compel_keyboard():
     keyboard.add('Обсудить')
     return keyboard
 
+def send_master_text(bot, text):
+    bot.send_message(chat_id=master, text=md.text(
+        md.text(f"{md.bold(data['user'])}, {text}")
+        # sep='\n',
+    ),
+                     parse_mode=ParseMode.MARKDOWN,
+                     )
