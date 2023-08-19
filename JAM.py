@@ -356,6 +356,7 @@ async def process_code(message: types.Message, state: FSMContext):
 
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
         keyboard.add("/stop")
+        await message.answer("Для выхода из режима наберите /stop", reply_markup=keyboard)
 
     else:
         await message.answer("Примите решение.")
@@ -369,7 +370,12 @@ async def process_code(message: types.Message, state: FSMContext):
             data['god_message'] = message.text.lower()
             await message.answer(f"Теперь все ваши сообщения получит {message.text.lower()}")
             await message.answer("Для выхода из режима напишите /end_message")
-            await message.answer("Для смены получателя /change")
+            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            keyboard.add("/compel")
+            keyboard.add("/change")
+            keyboard.add("/end_message")
+            await message.answer("Для смены получателя /change", reply_markup=keyboard)
+
         else:
             await message.answer("пиздишь он(а) с тобой не играет")
 
