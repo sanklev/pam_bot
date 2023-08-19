@@ -13,6 +13,7 @@ from aiogram.types import ReplyKeyboardRemove, \
     ReplyKeyboardMarkup, KeyboardButton, \
     InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.dispatcher.filters import Text
+from functions.functions import compel_keyboard
 
 bot_token = getenv("BOT_TOKEN")
 master = getenv('MASTER_CHAT')
@@ -215,10 +216,7 @@ async def god_action(message: types.Message, state: FSMContext):
 
         if message.text.lower() in doomsday_dict.keys():
             if data['god'] == 1:
-                keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-                keyboard.add("Принять")
-                keyboard.add('Отказаться')
-                keyboard.add('Обсудить')
+                keyboard = compel_keyboard()
                 with open(compel_dict_session_1[message.text.lower()], encoding='utf-8') as f:
                     lines = f.readlines()
                 text = ''.join(lines)
@@ -283,10 +281,7 @@ async def process_code(message: types.Message, state: FSMContext):
                 try:
                     if data['message'] == 'compel':
                         await state.set_state(CV.compel.state)
-                        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-                        keyboard.add("Принять")
-                        keyboard.add('Отказаться')
-                        keyboard.add('Обсудить')
+                        keyboard = compel_keyboard()
                         await message.answer("Примите решение по компелу:", reply_markup=keyboard)
                         await bot.send_message(chat_id=master, text=md.text(
                             md.text(f"{md.bold(data['user'])}, закончил диалог")
@@ -397,10 +392,7 @@ async def change_subj(message: types.Message, state: FSMContext):
 @dp.message_handler(state=CV.god_message, commands=['compel'])
 async def process_code(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        keyboard.add("Принять")
-        keyboard.add('Отказаться')
-        keyboard.add('Обсудить')
+        keyboard = compel_keyboard()
         await bot.send_message(chat_id=doomsday_dict[data['god_message']], reply_markup=keyboard
                                , text=md.text(
                 md.text(f"Вам навязано осложнение")
