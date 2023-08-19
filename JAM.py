@@ -361,7 +361,7 @@ async def process_code(message: types.Message, state: FSMContext):
 async def process_code(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         await bot.send_message(chat_id=doomsday_dict[data['god_message']], text=md.text(
-            md.text(f"От мастера: {message.text.lower()}")
+            md.text(f"От мастера: \n {message.text.lower()}")
             # sep='\n',
         ),
                                parse_mode=ParseMode.MARKDOWN,
