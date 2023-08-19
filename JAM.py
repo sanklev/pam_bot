@@ -224,8 +224,8 @@ async def god_action(message: types.Message, state: FSMContext):
                 text = ''.join(lines)
                 await bot.send_message(chat_id=doomsday_dict[message.text.lower()], reply_markup=keyboard
                                        , text=md.text(
-                        md.text(text)
-                        # sep='\n',
+                        text,
+                        sep='\n'
                     ),
                                        parse_mode=ParseMode.MARKDOWN,
                                        )
