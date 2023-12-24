@@ -53,15 +53,17 @@ class CV(StatesGroup):
 # archer dash have been done
 users = {
     'delirium': 'johny',
-    'drozd': 'lina',
-    'hse': 'gamedesigner',
+    'dasha': 'lina',
+    'Arseny': 'vydra_ela_pudru',
+    'R': 'gamedesigner',
     'test': 'test'
 }
 
 doomsday_dict = {
     'johny': 12312,
-    'lina': 123121,
-    'gamedesigner': 123111,
+    'dasha': 123121,
+    'Arseny': 123111,
+    'R': 123123,
     'test': 123123
 }
 
@@ -450,7 +452,7 @@ async def process_code(message: types.Message, state: FSMContext):
             )
             await message.answer("Выберите досье:", reply_markup=keyboard)
 
-    if message.text.lower() == 'mary':
+    if message.text.lower() == 'maryyyyyyyyyy':
         cv_list = list(personal_path_hacker.keys())
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
         keyboard.add('/back')
@@ -487,7 +489,7 @@ async def process_code(message: types.Message, state: FSMContext):
             )
         await message.answer("Выберите досье:", reply_markup=keyboard)
 
-    elif message.text.lower() == 'diary':
+    elif message.text.lower() == 'diaryyyyyyyyyy':
         cv_list = list(personal_path_reshala.keys())
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
         await state.update_data(code=message.text.lower())
