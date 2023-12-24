@@ -53,9 +53,9 @@ class CV(StatesGroup):
 # archer dash have been done
 users = {
     'delirium': 'johny',
-    'dasha': 'lina',
-    'Arseny': 'vydra_ela_pudru',
-    'R': 'gamedesigner',
+    'dasha': 'dasha',
+    'vydra_ela_pudru': 'Arseny',
+    'R': 'R',
     'test': 'test'
 }
 
