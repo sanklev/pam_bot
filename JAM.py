@@ -55,7 +55,7 @@ users = {
     'delirium': 'johny',
     'dasha': 'dasha',
     'vydra_ela_pudru': 'Arseny',
-    'R': 'R',
+    '1337': 'R',
     'test': 'test'
 }
 
