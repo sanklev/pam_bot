@@ -439,7 +439,7 @@ async def process_code(message: types.Message, state: FSMContext):
         await bot.send_message(
             message.chat.id,
             md.text(
-                md.text(f"Для возврата на ввода кода, введите /back")
+                md.text(f"Для возврата на этап ввода кода к базе данных, введите /back")
                 # sep='\n',
             ),
             parse_mode=ParseMode.MARKDOWN,
