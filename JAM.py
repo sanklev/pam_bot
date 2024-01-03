@@ -146,11 +146,20 @@ async def cancel_handler(message: types.Message, state: FSMContext):
     await message.reply('Cancelled.')
 
 
-@dp.message_handler(commands=['start', 'help'])
+@dp.message_handler(commands=['start'])
 async def send_welcome(message: types.Message, state: FSMContext):
     await message.reply(
         "Запрос на получение доступа в систему...\nДля подключения профиля введите персональный пароль.")
     await state.set_state(CV.user.state)
+
+@dp.message_handler(commands=['help'])
+async def send_help(message: types.Message, state: FSMContext):
+    await message.reply(
+        "Это ваш персональный помощник, созданный компанией MayFall.\nДоступные опции перечислены ниже в меню управления")
+    await message.reply(
+        "Чтобы вернуться на опцию входа в профиль введите /cancel\nДля сообщения мастеру введите команду /message\nДля прекращения общения с мастером введите команду /stop\nЧтобы вернуться на предыдущий статус (выбор базы данных) /back")
+    await message.reply(
+        "По любым не решенным вопросам обратитесь к мастеру напрямую или в чат вашего юнита")
 
 
 @dp.message_handler(state=CV.user)
