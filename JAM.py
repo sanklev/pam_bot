@@ -103,6 +103,17 @@ path_dict = {
            'cv': 'CV/characters/hr/hr.jpg'}
 }
 
+char_dict = {
+    'dec': {'cv': 'CV/pc/dec.jpeg',
+               'text': 'CV/pc/dec.txt'},
+    'killer': {
+        # 'cv': 'CV/pc/dec.jpeg',
+               'text': 'CV/pc/killer.txt'},
+    'maxwell': {
+        # 'cv': 'CV/pc/dec.jpeg',
+               'text': 'CV/pc/maxwell.txt'}
+}
+
 personal_path_hacker = {
     'koh': {'cv': 'CV/characters/koh/koh.jpeg',
             'text': 'CV/characters/koh/koh.txt'},
@@ -462,6 +473,33 @@ async def process_code(message: types.Message, state: FSMContext):
                 parse_mode=ParseMode.MARKDOWN,
             )
             await message.answer("Выберите досье:", reply_markup=keyboard)
+    elif message.text.lower() == 'char':
+        async with state.proxy() as data:
+            await state.set_state(CV.cv.state)
+            cv_list = list(char_dict.keys())
+            data['code'] = 'char'
+            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            keyboard.add('/back')
+            keyboard.add('/message')
+            for name in cv_list:
+                keyboard.add(name)
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Доступ к базе данных личных дел исполнителей открыт")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Для возврата на ввода кода, введите /back")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+            await message.answer("Выберите досье:", reply_markup=keyboard)
 
     if message.text.lower() == 'maryyyyyyyyyy':
         cv_list = list(personal_path_hacker.keys())
@@ -598,6 +636,19 @@ async def send_file(message: types.Message, state: FSMContext):
                     lines = f.readlines()
                 text = ''.join(lines)
                 await bot.send_photo(message.from_user.id, photo)
+                await message.reply(text)
+            else:
+                await message.reply('Указаного CV нет в вашей базе')
+        if data['code'] == 'char':
+            if current_cv in char_dict.keys():
+                try:
+                    photo = open(char_dict[current_cv]['cv'], "rb")
+                    await bot.send_photo(message.from_user.id, photo)
+                except:
+                    pass
+                with open(char_dict[current_cv]['text'], encoding='utf-8') as f:
+                    lines = f.readlines()
+                text = ''.join(lines)
                 await message.reply(text)
             else:
                 await message.reply('Указаного CV нет в вашей базе')
