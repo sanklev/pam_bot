@@ -62,8 +62,8 @@ users = {
 doomsday_dict = {
     'johny': 12312,
     'dasha': 123121,
-    'Arseny': 123111,
-    'R': 123123,
+    'arseny': 123111,
+    'r': 123123,
     'test': 123123
 }
 
