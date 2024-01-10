@@ -54,8 +54,8 @@ class CV(StatesGroup):
 users = {
     'delirium': 'johny',
     'enigma13': 'dasha',
-    'vydra_ela_pudru': 'Arseny',
-    '1337': 'R',
+    'vydra_ela_pudru': 'arseny',
+    '1337': 'r',
     'test': 'test'
 }
 
