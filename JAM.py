@@ -611,6 +611,35 @@ async def process_code(message: types.Message, state: FSMContext):
                 parse_mode=ParseMode.MARKDOWN,
             )
         await message.answer("Выберите досье:", reply_markup=keyboard)
+    if message.text.lower() == 'char':
+        cv_list = list(char_dict.keys())
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        keyboard.add('/back')
+        keyboard.add('/message')
+        await state.update_data(code=message.text.lower())
+        for name in cv_list:
+            keyboard.add(name)
+        await state.set_state(CV.cv.state)
+        async with state.proxy() as data:
+            # And send message
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Записанный код ведет в вашу личную базу данных")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Для возврата на ввода кода, введите /back")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+        await message.answer("Выберите досье:", reply_markup=keyboard)
+
     if message.text.lower() == 'maryyyyyyyyyy':
         cv_list = list(personal_path_hacker.keys())
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
