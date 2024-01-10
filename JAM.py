@@ -130,7 +130,7 @@ csi_past = {
                'text': 'CV/characters/damian_orton/csi_version.txt'},
     'csi': {'cv': 'CV/locations/CSI/csi.jpg',
             'text': 'CV/locations/CSI/security.txt'},
-    'death_squad': {'cv': 'CV/characters/death_squad/death_squad.jpg',
+    'death_squad': {'cv': 'CV/characters/death_squad/death_squad.jpeg',
                     'text': 'CV/characters/death_squad/death_squad.txt'},
 }
 
@@ -832,7 +832,7 @@ async def send_file(message: types.Message, state: FSMContext):
                 lines = f.readlines()
             text = ''.join(lines)
             await message.reply(text)
-        elif data['code'] == 'letiffall':
+        elif data['code'] == 'letitfall':
             try:
                 photo = open(let_it_fall[current_cv]['cv'], "rb")
                 await bot.send_photo(message.from_user.id, photo)
