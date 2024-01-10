@@ -114,6 +114,33 @@ char_dict = {
                'text': 'CV/pc/maxwell.txt'}
 }
 
+
+menace_list = {
+    'shattle_center': {'cv': 'CV/locations/shattle-center/shattle-center.jpg',
+            'text': 'CV/locations/shattle-center/security.txt'},
+    'rats': {'cv': 'CV/characters/brinn_the_rat/the_rat.jpg',
+             'text': 'CV/characters/brinn_the_rat/Rats.txt'},
+    'pigs': {'cv': 'CV/characters/koh/pigs.jpeg',
+             'text': 'CV/characters/koh/pigs.txt'},
+}
+
+csi_past = {
+
+    'damian': {'cv': 'CV/characters/damian_orton/Damian.jpg',
+               'text': 'CV/characters/damian_orton/csi_version.txt'},
+    'csi': {'cv': 'CV/locations/CSI/csi.jpg',
+            'text': 'CV/locations/CSI/security.txt'},
+    'death_squad': {'cv': 'CV/characters/death_squad/death_squad.jpg',
+                    'text': 'CV/characters/death_squad/death_squad.txt'},
+}
+
+let_it_fall = {
+    'koh': {'cv': 'CV/characters/koh/koh.jpeg',
+            'text': 'CV/characters/koh/koh.txt'},
+    'metzgerai': {'cv': 'CV/locations/metzgerai/metzgerai.jpeg',
+                  'text': 'CV/locations/metzgerai/metzgerai.txt'},
+}
+
 personal_path_hacker = {
     'koh': {'cv': 'CV/characters/koh/koh.jpeg',
             'text': 'CV/characters/koh/koh.txt'},
@@ -137,9 +164,9 @@ personal_path_reshala = {
 }
 
 nda3091 = {
-    'slum_area': {'cv': 'CV/locations/slum_area/slum_area.jpg',
+    'slum_area': {'cv': 'CV/locations/slum_area/slum_area.jpeg',
                   'text': 'CV/locations/slum_area/slum_area.txt'},
-    'chemical_plant': {'cv': 'CV/locations/chemical_plant/chemical_plant.jpg',
+    'chemical_plant': {'cv': 'CV/locations/chemical_plant/chemical_plant.jpeg',
                        'text': 'CV/locations/chemical_plant/chemical_plant.txt'},
 }
 
@@ -500,7 +527,90 @@ async def process_code(message: types.Message, state: FSMContext):
                 parse_mode=ParseMode.MARKDOWN,
             )
             await message.answer("Выберите досье:", reply_markup=keyboard)
-
+    if message.text.lower() == 'csipast':
+        cv_list = list(csi_past.keys())
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        keyboard.add('/back')
+        keyboard.add('/message')
+        await state.update_data(code=message.text.lower())
+        for name in cv_list:
+            keyboard.add(name)
+        await state.set_state(CV.cv.state)
+        async with state.proxy() as data:
+            # And send message
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Записанный код ведет в вашу личную базу данных")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Для возврата на ввода кода, введите /back")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+        await message.answer("Выберите досье:", reply_markup=keyboard)
+    if message.text.lower() == 'letitfall':
+        cv_list = list(let_it_fall.keys())
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        keyboard.add('/back')
+        keyboard.add('/message')
+        await state.update_data(code=message.text.lower())
+        for name in cv_list:
+            keyboard.add(name)
+        await state.set_state(CV.cv.state)
+        async with state.proxy() as data:
+            # And send message
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Записанный код ведет в вашу личную базу данных")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Для возврата на ввода кода, введите /back")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+        await message.answer("Выберите досье:", reply_markup=keyboard)
+    if message.text.lower() == 'menace':
+        cv_list = list(menace_list.keys())
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        keyboard.add('/back')
+        keyboard.add('/message')
+        await state.update_data(code=message.text.lower())
+        for name in cv_list:
+            keyboard.add(name)
+        await state.set_state(CV.cv.state)
+        async with state.proxy() as data:
+            # And send message
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Записанный код ведет в вашу личную базу данных")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text(f"Для возврата на ввода кода, введите /back")
+                    # sep='\n',
+                ),
+                parse_mode=ParseMode.MARKDOWN,
+            )
+        await message.answer("Выберите досье:", reply_markup=keyboard)
     if message.text.lower() == 'maryyyyyyyyyy':
         cv_list = list(personal_path_hacker.keys())
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -662,6 +772,26 @@ async def send_file(message: types.Message, state: FSMContext):
                 lines = f.readlines()
             text = ''.join(lines)
             await message.reply(text)
+        elif data['code'] == 'menace':
+            try:
+                photo = open(menace_list[current_cv]['cv'], "rb")
+                await bot.send_photo(message.from_user.id, photo)
+            except:
+                pass
+            with open(menace_list[current_cv]['text'], encoding='utf-8') as f:
+                lines = f.readlines()
+            text = ''.join(lines)
+            await message.reply(text)
+        elif data['code'] == '0021':
+            try:
+                photo = open(path_dict[current_cv]['cv'], "rb")
+                await bot.send_photo(message.from_user.id, photo)
+            except:
+                pass
+            with open(path_dict[current_cv]['text'], encoding='utf-8') as f:
+                lines = f.readlines()
+            text = ''.join(lines)
+            await message.reply(text)
         elif data['code'] == 'mary':
             try:
                 photo = open(personal_path_hacker[current_cv]['cv'], "rb")
@@ -689,6 +819,36 @@ async def send_file(message: types.Message, state: FSMContext):
             except:
                 pass
             with open(nda3091[current_cv]['text'], encoding='utf-8') as f:
+                lines = f.readlines()
+            text = ''.join(lines)
+            await message.reply(text)
+        elif data['code'] == 'menace':
+            try:
+                photo = open(menace_list[current_cv]['cv'], "rb")
+                await bot.send_photo(message.from_user.id, photo)
+            except:
+                pass
+            with open(menace_list[current_cv]['text'], encoding='utf-8') as f:
+                lines = f.readlines()
+            text = ''.join(lines)
+            await message.reply(text)
+        elif data['code'] == 'letiffall':
+            try:
+                photo = open(let_it_fall[current_cv]['cv'], "rb")
+                await bot.send_photo(message.from_user.id, photo)
+            except:
+                pass
+            with open(let_it_fall[current_cv]['text'], encoding='utf-8') as f:
+                lines = f.readlines()
+            text = ''.join(lines)
+            await message.reply(text)
+        elif data['code'] == 'csipast':
+            try:
+                photo = open(csi_past[current_cv]['cv'], "rb")
+                await bot.send_photo(message.from_user.id, photo)
+            except:
+                pass
+            with open(csi_past[current_cv]['text'], encoding='utf-8') as f:
                 lines = f.readlines()
             text = ''.join(lines)
             await message.reply(text)
