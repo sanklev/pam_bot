@@ -101,8 +101,8 @@ path_dict = {
             'text': 'CV/locations/CSI/CSI.txt'},
     'mayfall': {'cv': 'CV/locations/MayFall/mayfall.jpg',
                 'text': 'CV/locations/MayFall/mayfall.txt'},
-    'johny more': {'cv': 'CV/characters/JohnyMore/more.jpg',
-                'text': 'CV/characters/JohnyMore/more.txt'},
+    'johny more': {'cv': 'CV/characters/johnymore/more.jpeg',
+                'text': 'CV/characters/johnymore/more.txt'},
     '0021': {'text': 'CV/documents/order0021/order0021.txt'},
     'hr': {'text': 'CV/characters/hr/hr.txt',
            'cv': 'CV/characters/hr/hr.jpg'}
