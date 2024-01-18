@@ -144,6 +144,8 @@ let_it_fall = {
             'text': 'CV/characters/koh/koh.txt'},
     'metzgerai': {'cv': 'CV/locations/metzgerai/metzgerai.jpeg',
                   'text': 'CV/locations/metzgerai/metzgerai.txt'},
+    'xian': {'cv': 'CV/characters/xian/png.jpg',
+              'text': 'CV/characters/xian/xian.txt'},
 }
 
 personal_path_hacker = {
