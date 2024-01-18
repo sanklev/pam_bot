@@ -46,6 +46,7 @@ class CV(StatesGroup):
     compel = state()  # Для игрока - принять или отклонить осложнение
     message = state()  # переписка
     god_chosen = state()  # Для автора - выбор игрока кому написать
+    public = state()  # Для автора - выбор игрока кому написать
 
 
 # dict with passwords and logins
@@ -56,7 +57,9 @@ users = {
     'enigma13': 'dasha',
     'vydra_ela_pudru': 'arseny',
     '1337': 'r',
-    'test': 'test'
+    'teston': 'test'
+    # 'test': 'public'
+
 }
 
 doomsday_dict = {
@@ -98,6 +101,8 @@ path_dict = {
             'text': 'CV/locations/CSI/CSI.txt'},
     'mayfall': {'cv': 'CV/locations/MayFall/mayfall.jpg',
                 'text': 'CV/locations/MayFall/mayfall.txt'},
+    'johny more': {'cv': 'CV/characters/JohnyMore/more.jpg',
+                'text': 'CV/characters/JohnyMore/more.txt'},
     '0021': {'text': 'CV/documents/order0021/order0021.txt'},
     'hr': {'text': 'CV/characters/hr/hr.txt',
            'cv': 'CV/characters/hr/hr.jpg'}
@@ -232,6 +237,19 @@ async def process_code(message: types.Message, state: FSMContext):
             keyboard.add(str(name))
         keyboard.add('message')
         await message.answer("Сессия или команда:", reply_markup=keyboard)
+
+    elif message.text.lower() == 'test':
+        await message.reply("Приветствую, тестировщик")
+        await CV.public.set()
+        cv_list = list(path_dict.keys())
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        keyboard.add('/back')
+        keyboard.add('/message')
+        await state.update_data(code=message.text.lower())
+        for name in cv_list:
+            if name not in ['0021', 'hr']:
+                keyboard.add(name)
+        await message.answer("Выберите досье:", reply_markup=keyboard)
     # Finish our conversation
     return
 
@@ -763,6 +781,18 @@ async def send_file(message: types.Message, state: FSMContext):
     await message.answer("Введите код к нужной базе данных")
     await state.set_state(CV.code.state)
 
+@dp.message_handler(state=CV.public)
+async def send_file(message: types.Message, state: FSMContext):
+    current_cv = message.text.lower()
+    if current_cv in path_dict.keys():
+        photo = open(path_dict[current_cv]['cv'], "rb")
+        with open(path_dict[current_cv]['text'], encoding='utf-8') as f:
+            lines = f.readlines()
+        text = ''.join(lines)
+        await bot.send_photo(message.from_user.id, photo)
+        await message.reply(text)
+    else:
+        await message.reply('Указаного CV нет в вашей базе')
 
 @dp.message_handler(state=CV.cv)
 async def send_file(message: types.Message, state: FSMContext):
