@@ -469,17 +469,6 @@ async def process_code(message: types.Message, state: FSMContext):
         new_state = dp.current_state(chat=doomsday_dict[data['god_message']], user=doomsday_dict[data['god_message']])
         await new_state.set_state(CV.compel.state)
 
-
-@dp.message_handler(state=CV.god_message)
-async def process_code(message: types.Message, state: FSMContext):
-    async with state.proxy() as data:
-        await bot.send_message(chat_id=doomsday_dict[data['god_message']], text=md.text(
-            md.text(f"От мастера: \n {message.text.lower()}")
-            # sep='\n',
-        ),
-                               parse_mode=ParseMode.MARKDOWN,
-                               )
-
 @dp.message_handler(state=CV.god_message, commands=['attack'])
 async def change_subj(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
@@ -530,6 +519,17 @@ async def change_subj(message: types.Message, state: FSMContext):
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
             keyboard.add('start a massacare')
             await message.answer("Готовы начать резню.")
+@dp.message_handler(state=CV.god_message)
+async def process_code(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        await bot.send_message(chat_id=doomsday_dict[data['god_message']], text=md.text(
+            md.text(f"От мастера: \n {message.text.lower()}")
+            # sep='\n',
+        ),
+                               parse_mode=ParseMode.MARKDOWN,
+                               )
+
+
 
 
 
