@@ -487,17 +487,17 @@ async def change_subj(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         if data['attack']['Aspect_2'] is not None and message.text == 'start a massacare':
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            keyboard.add('message')
+            await message.answer("Сессия или команда:", reply_markup=keyboard)
             await bot.send_message(chat_id=doomsday_dict[data['god_message']]
                                    , text=md.text(
-                    md.text(f"Вас пытаются взломать"),
-                    md.text('Что известно о враждебной сущности:'),
+                    md.text(f"Вас пытаются взломать\n"),
+                    md.text('Что известно о враждебной сущности:\n'),
                     md.text('{}'.format(data['attack']))
                     # sep='\n',
                 ),
                                    parse_mode=ParseMode.MARKDOWN,
                                    )
-            keyboard.add('message')
-            await message.answer("Сессия или команда:", reply_markup=keyboard)
             await state.set_state(CV.god.state)
 
         if data['attack']['attack'] is None:
