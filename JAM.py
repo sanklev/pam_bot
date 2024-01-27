@@ -494,7 +494,9 @@ async def change_subj(message: types.Message, state: FSMContext):
                     # sep='\n',
                 ),
                                    parse_mode=ParseMode.MARKDOWN,
-                                   )
+                                   )keyboard.add('message')
+            await message.answer("Сессия или команда:", reply_markup=keyboard)
+            await state.set_state(CV.god.state)
 
         if data['attack']['attack'] is None:
             data['attack']['attack'] = message.text.lower()
@@ -515,10 +517,9 @@ async def change_subj(message: types.Message, state: FSMContext):
             data['attack']['Aspect_2'] = message.text.lower()
 
         if data['attack']['Aspect_2'] is not None:
-            await state.set_state(CV.attack_start.state)
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
             keyboard.add('start a massacare')
-            await message.answer("Готовы начать резню.")
+            await message.answer("Готовы начать резню.", reply_markup=keyboard)
 @dp.message_handler(state=CV.god_message)
 async def process_code(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
@@ -528,11 +529,6 @@ async def process_code(message: types.Message, state: FSMContext):
         ),
                                parse_mode=ParseMode.MARKDOWN,
                                )
-
-
-
-
-
 
 
 @dp.message_handler(state=CV.code)
