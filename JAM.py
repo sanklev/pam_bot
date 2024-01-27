@@ -518,7 +518,7 @@ async def change_subj(message: types.Message, state: FSMContext):
         elif data['attack']['Aspect_2'] is None:
             data['attack']['Aspect_2'] = message.text.lower()
 
-        if data['attack']['Aspect_2'] is not None:
+        if data['attack']['Aspect_2'] is not None and message.text != 'start a massacare':
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
             keyboard.add('start a massacare')
             await message.answer("Готовы начать резню.", reply_markup=keyboard)
