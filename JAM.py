@@ -29,7 +29,8 @@ logging.basicConfig(level=logging.INFO)
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
-
+# in default aiogram we cannot set state to another user from other userpass
+# here I define new class from the original to make this option real
 class state(State):
     async def set(self, user=None):
         """Option to set state for concrete user"""
@@ -47,7 +48,10 @@ class CV(StatesGroup):
     message = state()  # переписка
     god_chosen = state()  # Для автора - выбор игрока кому написать
     public = state()  # Для автора - выбор игрока кому написать
+    attack = state() # для автора - начать атаку
+    massacare = state() # для игрока - быть атокованным
 
+attack_dict = {}
 
 # dict with passwords and logins
 # transfer later to the os env just like
@@ -417,13 +421,15 @@ async def process_code(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         if message.text.lower() in list(doomsday_dict.keys()):
             await state.set_state(CV.god_message.state)
-            data['god_message'] = message.text.lower()
-            await message.answer(f"Теперь все ваши сообщения получит {message.text.lower()}")
-            await message.answer("Для выхода из режима напишите /end_message")
             keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
             keyboard.add("/compel")
             keyboard.add("/change")
+            keyboard.add("/attack")
             keyboard.add("/end_message")
+            data['god_message'] = message.text.lower()
+            await message.answer(f"Теперь все ваши сообщения получит {message.text.lower()}")
+            await message.answer("Для выхода из режима напишите /end_message")
+            await message.answer("Для атаки /attack")
             await message.answer("Для смены получателя /change", reply_markup=keyboard)
 
         else:
@@ -433,7 +439,11 @@ async def process_code(message: types.Message, state: FSMContext):
 @dp.message_handler(state=CV.god_message, commands=['end_message'])
 async def end_conversation(message: types.Message, state: FSMContext):
     await state.set_state(CV.god.state)
-    await message.answer(f"общение завершено")
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    for name in range(1, 4):
+        keyboard.add(str(name))
+    keyboard.add('message')
+    await message.answer(f"общение завершено", reply_markup=keyboard)
 
 
 @dp.message_handler(state=CV.god_message, commands=['change'])
@@ -469,6 +479,60 @@ async def process_code(message: types.Message, state: FSMContext):
         ),
                                parse_mode=ParseMode.MARKDOWN,
                                )
+
+@dp.message_handler(state=CV.god_message, commands=['attack'])
+async def change_subj(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        await state.set_state(CV.attack.state)
+        await message.answer("Задайте навык атаки:")
+        data['attack'] = {'Aspect_1':None,
+                          'Aspect_2':None,
+                          "attack":None,
+                          'defence':None,
+                          'stress':None,
+                          'conseq':None
+                          }
+
+@dp.message_handler(state=CV.attack)
+async def change_subj(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        if data['attack']['Aspect_2'] is not None and message.text == 'start a massacare':
+            await bot.send_message(chat_id=doomsday_dict[data['god_message']]
+                                   , text=md.text(
+                    md.text(f"Вас пытаются взломать"),
+                    md.text('Что известно о враждебной сущности:'),
+                    md.text('{}'.format(data['attack']))
+                    # sep='\n',
+                ),
+                                   parse_mode=ParseMode.MARKDOWN,
+                                   )
+
+        if data['attack']['attack'] is None:
+            data['attack']['attack'] = message.text.lower()
+            await message.answer("Навык атаки задан. Теперь защита")
+        elif data['attack']['defence'] is None:
+            data['attack']['defence'] = message.text.lower()
+            await message.answer("Навык защиты задан. Теперь стресс")
+        elif data['attack']['stress'] is None:
+            data['attack']['stress'] = message.text.lower()
+            await message.answer("Навык атаки задан. Теперь число последствий")
+        elif data['attack']['conseq'] is None:
+            data['attack']['conseq'] = message.text.lower()
+            await message.answer("Число последствий задано. Теперь Аспект 1")
+        elif data['attack']['Aspect_1'] is None:
+            data['attack']['Aspect_1'] = message.text.lower()
+            await message.answer("Число последствий задано. Теперь Аспект 2")
+        elif data['attack']['Aspect_2'] is None:
+            data['attack']['Aspect_2'] = message.text.lower()
+
+        if data['attack']['Aspect_2'] is not None:
+            await state.set_state(CV.attack_start.state)
+            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            keyboard.add('start a massacare')
+            await message.answer("Готовы начать резню.")
+
+
+
 
 
 @dp.message_handler(state=CV.code)
