@@ -13,6 +13,7 @@ from aiogram.types import ReplyKeyboardRemove, \
     InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.dispatcher.filters import Text
 from functions.functions import compel_keyboard, send_master_text
+import random
 
 bot_token = getenv("BOT_TOKEN")
 master = getenv('MASTER_CHAT')
@@ -51,8 +52,11 @@ class CV(StatesGroup):
     attack = state() # для автора - начать атаку
     massacare = state() # для игрока - быть атокованным
 
-attack_dict = {}
-
+def fudgeroll():
+    result = 0
+    for i in range(4):
+        result += random.randint(-1,1)
+    return result
 # dict with passwords and logins
 # transfer later to the os env just like
 # archer dash have been done
@@ -493,11 +497,15 @@ async def change_subj(message: types.Message, state: FSMContext):
                                    , text=md.text(
                     md.text(f"Вас пытаются взломать\n"),
                     md.text('Что известно о враждебной сущности:\n'),
-                    md.text('{}'.format(data['attack']))
+                    md.text('{}\n'.format(data['attack'])),
+                    md.text('результат броска противника: {} + навык атаки: {}'.format(fudgeroll(), data['attack']['attack']))
                     # sep='\n',
                 ),
                                    parse_mode=ParseMode.MARKDOWN,
                                    )
+            new_state = dp.current_state(chat=doomsday_dict[data['god_message']],
+                                         user=doomsday_dict[data['god_message']])
+            await new_state.set_state(CV.massacare.state)
             await state.set_state(CV.god.state)
 
         if data['attack']['attack'] is None:
