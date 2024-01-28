@@ -498,8 +498,9 @@ async def change_subj(message: types.Message, state: FSMContext):
                     md.text(f"Вас пытаются взломать\n"),
                     md.text('Что известно о враждебной сущности:\n'),
                     md.text('{}\n'.format(data['attack'])),
-                    md.text('результат броска противника: {} + навык атаки: {}'.format(fudgeroll(), data['attack']['attack']))
-                    # sep='\n',
+                    md.text('результат броска противника: {} + навык атаки: {}\n'.format(fudgeroll(), data['attack']['attack'])),
+                    md.text('Итого {}'.format(fudgeroll()+data['attack']['attack'])),
+                     sep='\n',
                 ),
                                    parse_mode=ParseMode.MARKDOWN,
                                    )
