@@ -185,6 +185,8 @@ nda3091 = {
                        'text': 'CV/locations/chemical_plant/chemical_plant.txt'},
 }
 
+massacare_char = {}
+massacare_hit = 0
 
 @dp.message_handler(state='*', commands=['cancel'])
 async def cancel_handler(message: types.Message, state: FSMContext):
@@ -419,6 +421,34 @@ async def process_code(message: types.Message, state: FSMContext):
         else:
             await message.answer("Примите решение по осложнению.")
 
+@dp.message_handler(state=CV.massacare)
+async def process_code(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        if data['massacare'] is None:
+            data['massacare'] = massacare_char
+        if message.text.isdigit():
+            roll = fudgeroll()
+            await message.answer(f"Бросок противника на защиту + навык: {roll + data['massacare']['defence']}")
+            if roll + data['massacare']['deffence'] <= int(message.text):
+                result = roll + data['massacare']['deffence'] - int(message.text)
+                if result <= data['massacare']['stress']:
+                    data['massacare']['stress'] = data['massacare']['stress'] - result
+                elif result <= data['massacare']['stress'] + data['conseq']:
+                    data['massacare']['stress'] = 0
+                    result = result - data['massacare']['conseq']
+                    data['conseq'] = 0
+                    data['massacare']['stress'] = data['massacare']['stress'] - result
+                else:
+                    data['conseq'] = -1
+        else:
+            await message.answer(f"Не похоже на бросок")
+            
+        if data['massacare'['conseq']] < 0:
+            await message.answer(f"Противник выведен из боя")
+            data['massacare'] = None
+            await message.answer("Введите код доступа к нужной базе данных")
+            await state.set_state(CV.code.state)
+
 
 @dp.message_handler(state=CV.god_chosen)
 async def process_code(message: types.Message, state: FSMContext):
@@ -499,13 +529,15 @@ async def change_subj(message: types.Message, state: FSMContext):
                     md.text('Что известно о враждебной сущности:\n'),
                     md.text('{}\n'.format(data['attack'])),
                     md.text('результат броска противника: {} + навык атаки: {}\n'.format(fudgeroll(), data['attack']['attack'])),
-                    md.text('Итого {}'.format(fudgeroll()+data['attack']['attack'])) #,
+                    md.text('Итого {}\n'.format(fudgeroll()+data['attack']['attack'])),
+                    md.text('Введите значение вашего броска')#,
                      # sep='\n',
                 ),
                                    parse_mode=ParseMode.MARKDOWN,
                                    )
             new_state = dp.current_state(chat=doomsday_dict[data['god_message']],
                                          user=doomsday_dict[data['god_message']])
+            massacare_char = data['attack']
             await new_state.set_state(CV.massacare.state)
             await state.set_state(CV.god.state)
 
