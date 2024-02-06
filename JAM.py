@@ -428,8 +428,8 @@ async def process_code(message: types.Message, state: FSMContext):
             data['massacare'] = massacare_char
         if message.text.isdigit():
             roll = fudgeroll()
-            await message.answer(f"Бросок противника на защиту + навык: {roll + data['massacare']['defence']}")
-            if roll + data['massacare']['deffence'] <= int(message.text):
+            await message.answer(f"Бросок противника на защиту + навык: {roll + int(data['massacare']['defence'])}")
+            if roll + int(data['massacare']['deffence']) <= int(message.text):
                 result = roll + data['massacare']['deffence'] - int(message.text)
                 if result <= data['massacare']['stress']:
                     data['massacare']['stress'] = data['massacare']['stress'] - result
@@ -449,6 +449,9 @@ async def process_code(message: types.Message, state: FSMContext):
             await message.answer("Введите код доступа к нужной базе данных")
             await state.set_state(CV.code.state)
 
+        await message.answer(f"Противник атакует")
+        await message.answer(f"Результат броска {fudgeroll() + int(data['massacare']['attack'])}")
+        await message.answer(f"Защиитесь и введите результат своей атаки")
 
 @dp.message_handler(state=CV.god_chosen)
 async def process_code(message: types.Message, state: FSMContext):
@@ -526,8 +529,8 @@ async def change_subj(message: types.Message, state: FSMContext):
                     md.text(f"Вас пытаются взломать\n"),
                     md.text('Что известно о враждебной сущности:\n'),
                     md.text('{}\n'.format(data['attack'])),
-                    md.text('результат броска противника: {} + навык атаки: {}\n'.format(fudgeroll(), data['attack']['attack'])),
-                    md.text('Итого {}\n'.format(fudgeroll()+data['attack']['attack'])),
+                    md.text('результат броска противника: {} + навык атаки: {}\n'.format(fudgeroll(), int(data['attack']['attack']))),
+                    md.text('Итого {}\n'.format(fudgeroll()+int(data['attack']['attack']))),
                     md.text('\nВведите значение вашего броска\n'),
                      # sep='\n',
                 ),
