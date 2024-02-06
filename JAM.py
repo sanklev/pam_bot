@@ -426,7 +426,7 @@ async def process_code(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         if data['massacare'] is None:
             data['massacare'] = massacare_char
-        if message.text.isdigit():
+        try:
             roll = fudgeroll()
             await message.answer(f"Бросок противника на защиту + навык: {roll + int(data['massacare']['defence'])}")
             if roll + int(data['massacare']['deffence']) <= int(message.text):
@@ -440,7 +440,7 @@ async def process_code(message: types.Message, state: FSMContext):
                     data['massacare']['stress'] = data['massacare']['stress'] - result
                 else:
                     data['conseq'] = -1
-        else:
+        except:
             await message.answer(f"Не похоже на бросок")
 
         if data['massacare']['conseq'] < 0:
