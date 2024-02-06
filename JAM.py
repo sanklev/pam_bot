@@ -520,8 +520,7 @@ async def change_subj(message: types.Message, state: FSMContext):
 async def change_subj(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         if data['attack']['Aspect_2'] is not None and message.text == 'start a massacare':
-            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            keyboard.add('message')
+
             await bot.send_message(chat_id=doomsday_dict[data['god_message']]
                                    , text=md.text(
                     md.text(f"Вас пытаются взломать\n"),
@@ -529,15 +528,17 @@ async def change_subj(message: types.Message, state: FSMContext):
                     md.text('{}\n'.format(data['attack'])),
                     md.text('результат броска противника: {} + навык атаки: {}\n'.format(fudgeroll(), data['attack']['attack'])),
                     md.text('Итого {}\n'.format(fudgeroll()+data['attack']['attack'])),
-                    md.text('Введите значение вашего броска')#,
+                    md.text('\nВведите значение вашего броска\n'),
                      # sep='\n',
                 ),
                                    parse_mode=ParseMode.MARKDOWN,
                                    )
             new_state = dp.current_state(chat=doomsday_dict[data['god_message']],
                                          user=doomsday_dict[data['god_message']])
-            massacare_char = data['attack']
             await new_state.set_state(CV.massacare.state)
+            massacare_char = data['attack']
+            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            keyboard.add('message')
             data['attack'] = None
             await message.answer("Сессия или команда:", reply_markup=keyboard)
             await state.set_state(CV.god.state)
