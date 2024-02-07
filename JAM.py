@@ -443,7 +443,7 @@ async def process_code(message: types.Message, state: FSMContext):
         except:
             await message.answer(f"Не похоже на бросок")
 
-        if data['massacare']['conseq'] < 0:
+        if int(data['massacare']['conseq']) < 0:
             await message.answer(f"Противник выведен из боя")
             data['massacare'] = None
             await message.answer("Введите код доступа к нужной базе данных")
