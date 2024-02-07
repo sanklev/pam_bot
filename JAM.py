@@ -424,7 +424,9 @@ async def process_code(message: types.Message, state: FSMContext):
 @dp.message_handler(state=CV.massacare)
 async def process_code(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        if data['massacare'] is None:
+        try data['massacare']:
+            pass
+        except:
             await message.answer(f"Записываю противника")
             data['massacare'] = massacare_char
             await message.answer(f"Записал противника")
