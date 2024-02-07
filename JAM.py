@@ -431,6 +431,7 @@ async def process_code(message: types.Message, state: FSMContext):
             await message.answer(f"Записываю противника")
             data['massacare'] = massacare_char
             await message.answer(f"Записал противника")
+            await message.answer(f"{data['massacare']}")
         try:
             roll = fudgeroll()
             await message.answer(f"Бросок противника на защиту + навык: {roll + int(data['massacare']['defence'])}")
