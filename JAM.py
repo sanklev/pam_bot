@@ -425,7 +425,7 @@ async def process_code(message: types.Message, state: FSMContext):
 async def process_code(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         try:
-            data['massacare']:
+            data['massacare']
             pass
         except:
             await message.answer(f"Записываю противника")
