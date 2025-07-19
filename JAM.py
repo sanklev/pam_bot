@@ -23,12 +23,14 @@ from aiogram.utils.formatting import (
     as_section,
 )
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 from typing import Any
 import asyncio
 import os
 import sys
 import random
+from functions.functions import *
 
 bot_token = getenv("BOT_TOKEN")
 master = getenv('MASTER_CHAT')
@@ -127,8 +129,8 @@ class CVScene(Scene, state="cv"):
             reply_markup=markup.adjust(2).as_markup(resize_keyboard=True),
         )
 
-    @on.message.enter()
-    async def on_enter(self, message: Message, state: FSMContext) -> Any:
+    @on.message(F.text == "Characters")
+    async def chars_list(self, message: Message, state: FSMContext) -> None:
         """
         Method triggered when the user enters the scene.
 
@@ -141,14 +143,27 @@ class CVScene(Scene, state="cv"):
         """
         markup = ReplyKeyboardBuilder()
 
-        markup.button(text="Characters")
-        markup.button(text="Documents")
-        markup.button(text="Location")
-        markup.button(text="🚫 Exit")
+        answers = subfolders('CV\characters')
+
+        keyboard_buttons = []
+
+        for chunk in chunk_list(answers, 4):
+            row = [KeyboardButton(text=answer) for answer in chunk]
+            keyboard_buttons.append(row)
+
+        keyboard = ReplyKeyboardMarkup(
+            keyboard=keyboard_buttons,
+            resize_keyboard=True,
+            one_time_keyboard=False
+        )
+
+        for name in answers:
+
+            markup.button(text=f"{name}")
 
         return await message.answer(
-            text='Добро пожаловать в хранилище CV. Выберите секцию для продолжения',
-            reply_markup=markup.adjust(2).as_markup(resize_keyboard=True),
+            text='Это доступные вам досье персонажей. Выберите любой',
+            reply_markup=keyboard
         )
 
 cv_router = Router(name=__name__)
