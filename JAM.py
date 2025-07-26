@@ -22,15 +22,19 @@ from aiogram.utils.formatting import (
     as_numbered_list,
     as_section,
 )
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
-from typing import Any
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, Message
+from aiogram.fsm.context import FSMContext
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder, InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, FSInputFile
+
+from typing import Any, Coroutine
 import asyncio
 import os
 import sys
 import random
 from functions.functions import *
+from math import ceil
 
 bot_token = getenv("BOT_TOKEN")
 master = getenv('MASTER_CHAT')
@@ -40,60 +44,63 @@ if not bot_token:
 
 # configs
 dp = Dispatcher()
+async def main() -> None:
+    # Initialize Bot instance with default bot properties which will be passed to all API calls
+    bot = Bot(
+        token=bot_token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    dp = create_dispatcher()
+    # And the run events dispatching
+    await dp.start_polling(bot)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
-def find_files_in_cv_folder(message: str):
-    """
-    Does the same job as the pathlib version but using the 'os' module.
 
-    Args:
-        message (str): The name of the subfolder to search within /CV.
-    """
-    # Define the file extensions we are looking for
-    target_extensions = ('.png', '.jpg', 'jpeg') # endswith() wants a tuple
+async def send_characters_page(
+        event: Message | CallbackQuery, state: FSMContext, page: int
+):
+    data = await state.get_data()
+    answers = data.get("answers", [])
 
-    # Construct the path in an OS-agnostic way
-    # However, the request for a leading '/' is specific.
-    if sys.platform == "win32":
-        drive = os.path.splitdrive(os.getcwd())[0]
-        base_dir = os.path.join(drive + '\\', 'CV', message)
-    else: # Linux, macOS, etc.
-        base_dir = os.path.join('/', 'CV', message)
+    max_page = ceil(len(answers) / PAGE_SIZE) - 1
+    page = max(0, min(page, max_page))  # Clamp page
 
-    print(f"[*] Searching in target directory: {base_dir}")
+    chunk = list(chunk_list(answers, PAGE_SIZE))[page]
 
-    # 1. Check if the directory exists
-    if not os.path.isdir(base_dir):
-        print(f"[!] Error: The directory '{base_dir}' does not exist or is not a directory.")
-        return
+    # Create buttons for this page, each button callback_data includes the character name
+    #res = [a[i:i + n] for i in range(0, len(a), n)]
+    buttons = [
+        InlineKeyboardButton(text=name, callback_data=f"char_select:{name}")
+        for name in chunk
+    ]
+    buttons = [buttons[i:i + 2] for i in range(0, len(buttons), 2)]
+    # Pagination buttons
+    navigation_buttons = []
+    if page > 0:
+        navigation_buttons.append(
+            InlineKeyboardButton(
+                text="⬅️ Prev", callback_data=f"char_page:{page - 1}"
+            )
+        )
+    if page < max_page:
+        navigation_buttons.append(
+            InlineKeyboardButton(
+                text="Next ➡️", callback_data=f"char_page:{page + 1}"
+            )
+        )
 
-    found_files = []
-    # 2. Iterate recursively using os.walk()
-    # os.walk yields a 3-tuple for each directory it visits:
-    # (current_directory_path, list_of_subdirectories, list_of_filenames)
-    for dirpath, _, filenames in os.walk(base_dir):
-        for filename in filenames:
-            # 3. Check if the filename ends with one of our target extensions
-            # We use .lower() to make the check case-insensitive
-            if filename.lower().endswith(target_extensions):
-                # Construct the full path to the file
-                full_path = os.path.join(dirpath, filename)
-                found_files.append(full_path)
-            if filename.lower().endswith(('.txt')):
-                pass
+    keyboard = InlineKeyboardMarkup(
+                inline_keyboard=buttons + [navigation_buttons],
+                row_width=2
+    )
 
-
-    # 4. Print the results
-    if found_files:
-        print(f"\n[+] Found {len(found_files)} matching files:")
-        for file_path in found_files:
-            print(f"  - {file_path}")
+    text = "Это доступные вам досье персонажей. Выберите любой"
+    if isinstance(event, Message):
+        await event.answer(text=text, reply_markup=keyboard)
     else:
-        print("\n[-] No files ending with .png, .jpg, or .txt were found.")
-
-
+        # CallbackQuery
+        await event.message.edit_text(text=text, reply_markup=keyboard)
+        await event.answer()  # Acknowledge callback query
 
 class CVScene(Scene, state="cv"):
     """
@@ -102,7 +109,6 @@ class CVScene(Scene, state="cv"):
     It inherits from Scene class and is associated with the state "cv".
     It handles the logic and flow of getting CVs
     """
-
     @on.message.enter()
     async def on_enter(self, message: Message, state: FSMContext) -> Any:
         """
@@ -117,54 +123,111 @@ class CVScene(Scene, state="cv"):
         """
         markup = ReplyKeyboardBuilder()
 
+        answers = subfolders('CV')
 
-        markup.button(text="Characters")
-        markup.button(text="Documents")
-        markup.button(text="Location")
-        markup.button(text="🚫 Exit")
-
-
-        return await message.answer(
-            text = 'Добро пожаловать в хранилище CV. Выберите секцию для продолжения',
-            reply_markup=markup.adjust(2).as_markup(resize_keyboard=True),
-        )
-
-    @on.message(F.text == "Characters")
-    async def chars_list(self, message: Message, state: FSMContext) -> None:
-        """
-        Method triggered when the user enters the scene.
-
-        It displays the current question and answer options to the user.
-
-        :param message:
-        :param state:
-        :param step: Scene argument, can be passed to the scene using the wizard
-        :return:
-        """
-        markup = ReplyKeyboardBuilder()
-
-        answers = subfolders('CV\characters')
-
-        keyboard_buttons = []
-
-        for chunk in chunk_list(answers, 4):
+        # Build keyboard rows in chunks of 3
+        for chunk in chunk_list(answers, 3):
             row = [KeyboardButton(text=answer) for answer in chunk]
-            keyboard_buttons.append(row)
+            markup.row(*row)
 
-        keyboard = ReplyKeyboardMarkup(
-            keyboard=keyboard_buttons,
-            resize_keyboard=True,
-            one_time_keyboard=False
-        )
+        # Add "Exit" button as its own row
+        markup.row(KeyboardButton(text="Exit"))
 
-        for name in answers:
-
-            markup.button(text=f"{name}")
+        # Generate the final keyboard
+        reply_markup = markup.as_markup(resize_keyboard=True, one_time_keyboard=False)
 
         return await message.answer(
-            text='Это доступные вам досье персонажей. Выберите любой',
-            reply_markup=keyboard
+            text='Добро пожаловать в хранилище CV. Выберите секцию для продолжения',
+            reply_markup=reply_markup
         )
+
+    @on.message(F.text.lower() == "characters")
+    async def chars_list(self, message: Message, state: FSMContext) -> None:
+        answers = subfolders('CV\characters')  # list of character names
+        if not answers:
+            return await message.answer("Нет доступных досье персонажей.")
+        # Save answers in state for callback queries
+        await state.update_data(answers=answers)
+        await send_characters_page(message, state, page=0)
+
+
+
+    @on.callback_query(F.data.startswith("char_page:"))
+    async def change_characters_page(self, callback: CallbackQuery, state: FSMContext):
+        _, page_str = callback.data.split(":")
+        page = int(page_str)
+        await send_characters_page(callback, state, page)
+
+    @on.callback_query(F.data.startswith("char_select:"))
+    async def character_selected(self,callback: CallbackQuery, state: FSMContext):
+        # Extract the selected character name
+        _, selected_char = callback.data.split(":", maxsplit=1)
+
+        # Confirm the selection
+        await callback.answer(f"Вы выбрали: {selected_char}")
+
+        # Define the correct path to the character's image
+        # Use a raw string for proper backslash escaping
+        photo_path = fr'CV\characters\{selected_char}\{selected_char}.jpg'
+        text_path = fr'CV\characters\{selected_char}\{selected_char}.txt'
+
+        # Handle potential file not found error
+        try:
+            # Use FSInputFile to send the image without manually opening/closing it
+            photo = FSInputFile(path=photo_path)
+            await callback.message.reply_photo(photo=photo)
+            with open(text_path, 'r', encoding='utf-8') as file:
+                text_content = file.read()
+            await callback.message.reply(
+                text=text_content,
+                parse_mode="HTML"
+            )
+        except FileNotFoundError:
+            await callback.message.reply(
+                text="⚠️ Изображение не найдено. Проверьте путь к файлу."
+            )
+        except Exception as e:
+            await callback.message.reply(
+                f"❌ Произошла ошибка: {str(e)}"
+            )
+
+
+    # @on.message(F.text == "Characters")
+    # async def chars_list(self, message: Message, state: FSMContext) -> None:
+    #     """
+    #     Method triggered when the user enters the scene.
+    #
+    #     It displays the current question and answer options to the user.
+    #
+    #     :param message:
+    #     :param state:
+    #     :param step: Scene argument, can be passed to the scene using the wizard
+    #     :return:
+    #     """
+    #     markup = ReplyKeyboardBuilder()
+    #
+    #     answers = subfolders('CV\characters')
+    #
+    #     keyboard_buttons = []
+    #
+    #     for chunk in chunk_list(answers, 4):
+    #         row = [KeyboardButton(text=answer) for answer in chunk]
+    #         keyboard_buttons.append(row)
+    #
+    #     keyboard = ReplyKeyboardMarkup(
+    #         keyboard=keyboard_buttons,
+    #         resize_keyboard=True,
+    #         one_time_keyboard=False
+    #     )
+    #
+    #     for name in answers:
+    #
+    #         markup.button(text=f"{name}")
+    #
+    #     return await message.answer(
+    #         text='Это доступные вам досье персонажей.',
+    #         reply_markup=keyboard
+    #     )
 
 cv_router = Router(name=__name__)
 # Add handler that initializes the scene
@@ -208,13 +271,7 @@ def create_dispatcher():
 
     return dispatcher
 
-async def main() -> None:
-    # Initialize Bot instance with default bot properties which will be passed to all API calls
-    bot = Bot(
-        token=bot_token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-    dp = create_dispatcher()
-    # And the run events dispatching
-    await dp.start_polling(bot)
+
 
 
 
